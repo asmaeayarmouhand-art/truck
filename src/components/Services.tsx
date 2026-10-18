@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Wrench,
   Truck,
@@ -34,6 +34,18 @@ const iconMap: Record<string, React.ElementType> = {
 
 export const Services: React.FC<ServicesProps> = ({ onSelectService }) => {
   const [activeModalService, setActiveModalService] = useState<ServiceItem | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveModalService(null);
+      }
+    };
+    if (activeModalService) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeModalService]);
 
   const handleBookService = (serviceTitle: string) => {
     setActiveModalService(null);

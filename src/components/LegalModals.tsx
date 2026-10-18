@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, ShieldCheck, FileText } from 'lucide-react';
 import { businessInfo } from '../config/businessInfo';
 
@@ -9,6 +9,18 @@ interface LegalModalProps {
 }
 
 export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose }) => {
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen || !type) return null;
 
   return (
@@ -17,8 +29,12 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose })
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
+      onClick={onClose}
     >
-      <div className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-slate-900 border border-slate-750 rounded-xl p-6 sm:p-8 text-slate-200 shadow-2xl">
+      <div
+        className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-slate-900 border border-slate-750 rounded-xl p-6 sm:p-8 text-slate-200 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-2">
             {type === 'privacy' ? (
@@ -79,7 +95,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, type, onClose })
               </p>
               <h4 className="text-base font-semibold text-white pt-2">Commercial Standards & Safety</h4>
               <p>
-                All repairs adhere to applicable DOT and manufacturer safety standards. Customers are responsible for
+                All repairs adhere to applicable commercial safety standards. Customers are responsible for
                 verifying pre-trip inspection compliance upon vehicle pickup or release.
               </p>
               <h4 className="text-base font-semibold text-white pt-2">Payment Terms</h4>

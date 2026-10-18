@@ -130,10 +130,18 @@ export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
         body: JSON.stringify(formData),
       });
 
-      const data = await response.json();
+      let data: any = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = null;
+      }
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Unable to submit service request. Please try again or call dispatch.');
+      if (!response.ok || !data || !data.success) {
+        throw new Error(
+          (data && data.message) ||
+          `Unable to submit service request (Error ${response.status}). Please try again or call dispatch.`
+        );
       }
 
       setSuccessResult({
@@ -175,11 +183,16 @@ export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
 
     try {
       const res = await fetch(`/api/service-request/${encodeURIComponent(lookupTicketInput.trim())}`);
-      const data = await res.json();
-      if (!res.ok || !data.success) {
+      let data: any = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+      if (!res.ok || !data || !data.success) {
         setLookupResult({
           found: false,
-          error: data.message || 'Ticket not found in queue.',
+          error: (data && data.message) || `Ticket not found in queue (Status ${res.status}).`,
         });
       } else {
         setLookupResult({
@@ -187,10 +200,10 @@ export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
           data: data.request,
         });
       }
-    } catch (err) {
+    } catch {
       setLookupResult({
         found: false,
-        error: 'Error connecting to server for ticket lookup.',
+        error: 'Unable to reach the dispatch server. Please check your connection.',
       });
     } finally {
       setLookupLoading(false);

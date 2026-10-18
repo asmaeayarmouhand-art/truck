@@ -7,20 +7,26 @@
     <script>
       (function() {
         try {
-          var nativeFetch = window.fetch ? window.fetch.bind(window) : undefined;
-          var currentFetch = nativeFetch;
-          Object.defineProperty(window, 'fetch', {
-            get: function() {
-              return currentFetch;
-            },
-            set: function(newFetch) {
-              currentFetch = newFetch;
-            },
-            configurable: true,
-            enumerable: true
-          });
+          var origFetch = window.fetch;
+          if (origFetch) {
+            var activeFetch = function() {
+              return origFetch.apply(window, arguments);
+            };
+            Object.defineProperty(window, 'fetch', {
+              get: function() {
+                return activeFetch;
+              },
+              set: function(fn) {
+                if (typeof fn === 'function') {
+                  activeFetch = fn;
+                }
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
         } catch (e) {
-          // Fallback if descriptor is sealed
+          // Keep default if restricted
         }
       })();
     </script>
