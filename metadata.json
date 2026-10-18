@@ -1,0 +1,6 @@
+{
+  "name": "Apex Heavy Truck & Fleet Repair",
+  "description": "Professional commercial heavy-duty truck repair, diesel engine diagnostics, semi-truck maintenance, and fleet services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
