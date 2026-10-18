@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
@@ -10,8 +11,9 @@ import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { MobileCtaBar } from './components/MobileCtaBar';
 import { LegalModal } from './components/LegalModals';
+import { AuthModal } from './components/AuthModal';
 
-export default function App() {
+function AppContent() {
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
 
@@ -27,7 +29,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-orange-600 selection:text-white">
-      {/* 1. Header Navigation */}
+      {/* 1. Header Navigation with Account feature at top right */}
       <Navbar onRequestService={() => scrollToContact()} />
 
       <main className="flex-1">
@@ -68,6 +70,17 @@ export default function App() {
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
       />
+
+      {/* Customer Account / Sign Up Modal */}
+      <AuthModal />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

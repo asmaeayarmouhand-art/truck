@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Phone, Wrench, Menu, X, Shield } from 'lucide-react';
+import { Phone, Wrench, Menu, X, Shield, UserPlus, User } from 'lucide-react';
 import { businessInfo } from '../config/businessInfo';
+import { useAuth } from '../context/AuthContext';
+import { UserAccountMenu } from './UserAccountMenu';
 
 interface NavbarProps {
   onRequestService: () => void;
@@ -9,6 +11,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, isAuthenticated, openAuthModal } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -39,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4 lg:gap-8">
+        <div className="flex items-center justify-between h-20 gap-3 sm:gap-4 lg:gap-6">
           {/* Zone 1: Company Logo and Name */}
           <a
             href="#home"
@@ -59,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
           </a>
 
           {/* Zone 2: Navigation Links (Desktop) */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-medium text-slate-300">
+          <nav className="hidden lg:flex items-center gap-6 xl:gap-7 text-sm font-medium text-slate-300">
             {navLinks.map((link) => (
               <a
                 key={link.label}
@@ -71,8 +74,23 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
             ))}
           </nav>
 
-          {/* Zone 3: Action Buttons */}
-          <div className="hidden sm:flex items-center gap-3 shrink-0">
+          {/* Zone 3: Top Right Action Controls */}
+          <div className="hidden sm:flex items-center gap-2.5 lg:gap-3 shrink-0">
+            {/* Account Feature at top right */}
+            {isAuthenticated ? (
+              <UserAccountMenu onRequestService={onRequestService} />
+            ) : (
+              <button
+                onClick={() => openAuthModal('register')}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-750 hover:border-orange-500/60 rounded-lg transition-colors whitespace-nowrap focus:outline-hidden focus-visible:ring-2 focus-visible:ring-orange-500"
+                title="Create Account / إنشاء حساب"
+              >
+                <UserPlus className="w-3.5 h-3.5 text-orange-400" />
+                <span>Create Account</span>
+              </button>
+            )}
+
+            {/* Call Now Button */}
             <a
               href={`tel:${businessInfo.contact.phoneTel}`}
               className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-200 bg-slate-900 border border-slate-700/80 rounded-lg hover:bg-slate-800 hover:text-white transition-colors whitespace-nowrap focus:outline-hidden focus-visible:ring-2 focus-visible:ring-orange-500"
@@ -80,11 +98,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
             >
               <Phone className="w-3.5 h-3.5 text-orange-400" />
               <span>Call Now</span>
-              <span className="text-slate-400 font-normal">
+              <span className="hidden xl:inline text-slate-400 font-normal">
                 {businessInfo.contact.phoneDisplay}
               </span>
             </a>
 
+            {/* Request Service Primary CTA */}
             <button
               onClick={onRequestService}
               className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-orange-600 rounded-lg hover:bg-orange-500 shadow-sm shadow-orange-900/40 transition-colors whitespace-nowrap focus:outline-hidden focus-visible:ring-2 focus-visible:ring-orange-400"
@@ -94,8 +113,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
             </button>
           </div>
 
-          {/* Mobile menu trigger */}
+          {/* Mobile menu and mobile account trigger */}
           <div className="flex items-center gap-2 sm:hidden">
+            {isAuthenticated ? (
+              <UserAccountMenu onRequestService={onRequestService} />
+            ) : (
+              <button
+                onClick={() => openAuthModal('register')}
+                className="p-2 text-orange-400 bg-slate-900 border border-slate-800 rounded-lg hover:bg-slate-800"
+                aria-label="Create Account / إنشاء حساب"
+                title="Create Account"
+              >
+                <UserPlus className="w-4 h-4" />
+              </button>
+            )}
             <a
               href={`tel:${businessInfo.contact.phoneTel}`}
               className="p-2 text-orange-400 bg-slate-900 border border-slate-800 rounded-lg hover:bg-slate-800"
@@ -132,6 +163,31 @@ export const Navbar: React.FC<NavbarProps> = ({ onRequestService }) => {
           </div>
 
           <div className="pt-3 border-t border-slate-800/80 flex flex-col gap-2">
+            {!isAuthenticated ? (
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('register');
+                  }}
+                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-bold text-white bg-slate-900 border border-slate-750 rounded-lg hover:bg-slate-800"
+                >
+                  <UserPlus className="w-3.5 h-3.5 text-orange-400" />
+                  <span>Create Account</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('login');
+                  }}
+                  className="flex items-center justify-center gap-1.5 py-2.5 px-3 text-xs font-bold text-slate-300 bg-slate-950 border border-slate-800 rounded-lg hover:text-white"
+                >
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Sign In</span>
+                </button>
+              </div>
+            ) : null}
+
             <a
               href={`tel:${businessInfo.contact.phoneTel}`}
               onClick={handleLinkClick}

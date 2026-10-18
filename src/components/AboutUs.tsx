@@ -50,7 +50,7 @@ export const AboutUs: React.FC = () => {
 
             <p className="text-base text-slate-300 leading-relaxed mb-6">
               {businessInfo.companyName} provides professional heavy truck repair, diesel engine services, and
-              preventive fleet maintenance for commercial transport operators across the United States. We serve
+              preventive fleet maintenance for commercial transport operators. We serve
               independent owner-operators, freight transport fleets, and commercial businesses whose livelihood depends
               on dependable equipment.
             </p>

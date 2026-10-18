@@ -13,12 +13,14 @@ import {
   Search,
 } from 'lucide-react';
 import { businessInfo } from '../config/businessInfo';
+import { useAuth } from '../context/AuthContext';
 
 interface ContactProps {
   preselectedService?: string;
 }
 
 export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
+  const { user } = useAuth();
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -57,6 +59,19 @@ export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
       setFormData((prev) => ({ ...prev, serviceNeeded: preselectedService }));
     }
   }, [preselectedService]);
+
+  // Pre-fill user data if authenticated
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        name: prev.name || user.name,
+        phone: prev.phone || user.phone,
+        email: prev.email || user.email,
+        truckType: prev.truckType || user.truckType || '',
+      }));
+    }
+  }, [user]);
 
   const validateField = (field: string, value: string) => {
     let error = '';
@@ -127,7 +142,10 @@ export const Contact: React.FC<ContactProps> = ({ preselectedService }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          userId: user?.id,
+        }),
       });
 
       let data: any = null;
