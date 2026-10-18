@@ -3,6 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Compatibility patch for browser extensions intercepting window.fetch in iframe environments -->
+    <script>
+      (function() {
+        try {
+          var nativeFetch = window.fetch ? window.fetch.bind(window) : undefined;
+          var currentFetch = nativeFetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() {
+              return currentFetch;
+            },
+            set: function(newFetch) {
+              currentFetch = newFetch;
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          // Fallback if descriptor is sealed
+        }
+      })();
+    </script>
     <title>TRUCK SERVICE SI | Reliable Commercial Heavy Truck Repair</title>
     <meta
       name="description"
